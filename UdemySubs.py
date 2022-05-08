@@ -22,7 +22,7 @@ def __get_path__(relative_path):
 
 def remove_time_range(text):
     #removes the time range and the possible number of the block
-    regex = r"\n?[\d]*?\n\d{2}:\d{2}:\d{2}.\d{3} --> \d{2}:\d{2}:\d{2}.\d{3}\n|\n?[\d]*?\n\d{2}:\d{2}.\d{3} --> \d{2}:\d{2}.\d{3}"
+    regex = r"\n?[\d]*?\n\d{2}:\d{2}:\d{2}.\d{3} --> \d{2}:\d{2}:\d{2}.\d{3}( line:[\d]*% )?\n|\n?[\d]*?\n\d{2}:\d{2}.\d{3} --> \d{2}:\d{2}.\d{3}( line:[\d]*% )?"
     return re.sub(regex, "", text)
 
 def remove_webvtt(text):
