@@ -1,5 +1,5 @@
 # UdemySubs
-Converts Udemy Subtitles (.vtt, .txt, ...) into human readable ones.
+Converts Udemy Subtitles (.vtt, .txt, .srt, ...) into human readable ones.
 
 To capture subtitles on Udemy:
 <ul>
