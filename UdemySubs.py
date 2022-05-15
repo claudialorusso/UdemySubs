@@ -1,7 +1,8 @@
 # Converts Udemy Subtitles in human readable ones
 import re
 import sys
-from os import path
+from os.path import abspath, join, exists, basename, dirname, isdir
+
 
 # ---------------------------- UTILS -------------------------------------
 def __get_path__(relative_path):
@@ -14,11 +15,10 @@ def __get_path__(relative_path):
     try:
         # NOTE:
         # PyInstaller creates a temp folder and stores path in _MEIPASS
-        # It's a runtime computation. don't worry about the inline warning.
         base_path = sys._MEIPASS
     except Exception:
-        base_path = path.abspath(".")
-    return path.join(base_path, relative_path)
+        base_path = abspath(".")
+    return join(base_path, relative_path)
 
 def remove_time_range(text):
     #removes the time range and the possible number of the block
@@ -42,16 +42,53 @@ def remove_tag(text):
     return re.sub(regex2, "", re.sub(regex1, "", text))
 
 if __name__ == '__main__':
-    #TODO Input validation
-    file_path = input("Insert the subtitles path file:\t")
-    file_path = __get_path__(file_path)
-    #file_name = path.basename(file_path)
-    #file_output_name = file_name + "_readable.txt"
-    #file_output_path = input("Where do you want to save the output?:\t")
-    #file_output_path = __get_path__(file_output_path)
-    with open(file_path, 'r', encoding="UTF-8") as f:
-        text = f.read()
-    text = remove_webvtt(remove_tag(add_new_line(remove_new_line(remove_time_range(text)))))
+    print("\nWELCOME TO UdemySubs\n")
+    close_program = False
 
-    print("\n\n\n--------\tOUTPUT\t--------\n\n", text)
+    while not close_program:
+        exit = False
+        while not exit:
+            #TODO input extension validation (.vtt, .srt, .txt)
+            file_path = input("\nInsert the subtitles path file+name:\t")
 
+            file_path = __get_path__(file_path)
+            if not exists(file_path):
+                exit = False
+                print("\nFile not Found. Please Retry.\n")
+            else:
+                base_name = basename(file_path)
+
+                exit = True
+                try:
+                    with open(file_path, 'r', encoding="UTF-8") as f:
+                        print("\nProcessing ", base_name)
+                        text = f.read()
+                    text = remove_webvtt(remove_tag(add_new_line(remove_new_line(remove_time_range(text)))))
+                    print("\n\n\n--------\tOUTPUT\t--------\n\n", text)
+                except Exception:
+                    print("\nFile not Found. Extension of the file not valid. Try with .vtt, .srt or .txt\n") #FIXME
+
+        save = input("\n\nDo you want to save the output? Yes/y to continue:\t")
+        if save.lower() == "y" or save.lower() == "yes":
+            exists = False
+            while not exists:
+                file_path = input("Insert the output path file+name:\t")
+
+                file_path = __get_path__(file_path)
+                dir_name = dirname(file_path)
+                if not isdir(dir_name):
+                    print("\nPath not valid. Please Retry.\n")
+                    exists = False
+                else:
+                    base_name = basename(file_path)
+                    print("\nSaving ", base_name)
+                    exists = True
+                    with open(file_path, 'w', encoding="UTF-8") as f:
+                        f.write(text)
+
+        close = input("\nDo you want to perform another computation? Yes/y to continue:\t")
+        if close.lower() == "y" or close.lower() == "yes":
+            close_program = False
+        else:
+            close_program = True
+            print("\nBye!\n")
